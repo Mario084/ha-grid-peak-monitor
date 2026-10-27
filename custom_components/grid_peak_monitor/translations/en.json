@@ -1,0 +1,91 @@
+{
+  "title": "Grid Peak Monitor",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Choose two measurement sources",
+        "description": "Choose total power at the grid connection and a cumulative meter counting only grid imports. The list is narrowed by units and state class; it cannot reliably distinguish grid, solar, household or daily meters. You confirm the physical meaning. Custom sensors without a device class are supported with matching units. No devices are controlled.",
+        "data": {
+          "name": "Name",
+          "power_sensor": "Total grid power",
+          "energy_sensor": "Cumulative grid import"
+        },
+        "data_description": {
+          "power_sensor": "W or kW; entire grid connection, not solar, household load or a single phase.",
+          "energy_sensor": "Wh/kWh/MWh; grid imports only, cumulative, no regular reset."
+        }
+      },
+      "settings": {
+        "title": "Confirm direction and target",
+        "description": "Check during independently known grid import: does the power sensor show positive or negative? Do not infer this from its current sign alone: solar and batteries can export. The target is your desired fixed-quarter average, not a tariff limit or a device command. Once finished, open Peak Monitor (Netzspitzen) in the sidebar.",
+        "data": {
+          "import_sign": "Import direction",
+          "target_kw": "Personal quarter-hour target"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Advanced",
+            "description": "Default 120 seconds: adjust only to the verified reporting interval. Polling does not refresh old values. Enter resolution only if known, e.g. 0.01 kWh = 10 Wh; 0 does not estimate resolution and keeps strict energy report age checks.",
+            "data": {
+              "max_age": "Maximum report age",
+              "energy_resolution_kwh": "Known meter resolution (0 = unknown / strict age limit)"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_sensor": "Choose a matching power or energy sensor; its device class does not match.",
+      "invalid_unit": "Power requires W/kW; import energy requires Wh/kWh/MWh.",
+      "invalid_energy": "Choose a nonnegative cumulative import meter with state class total or total_increasing, not a daily meter.",
+      "source_unavailable": "The sensor is missing or has no valid numeric value (unknown/unavailable). Check the source first.",
+      "same_source": "Choose two different measurement sources for power and import energy.",
+      "invalid_settings": "Check direction, target and advanced settings; use values within the allowed ranges.",
+      "sources_changed": "A measurement source has become invalid. Check it and confirm again.",
+      "direction_required": "Check during actual grid import and explicitly select the import direction."
+    },
+    "abort": {
+      "already_configured": "This source pairing is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Display settings",
+        "description": "Check during independently known grid import: does the power sensor show positive or negative? Do not infer this from its current sign alone: solar and batteries can export. The target is your desired fixed-quarter average, not a tariff limit or a device command. Once finished, open Peak Monitor (Netzspitzen) in the sidebar.",
+        "data": {
+          "import_sign": "Import direction",
+          "target_kw": "Personal quarter-hour target"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Advanced",
+            "description": "Default 120 seconds: adjust only to the verified reporting interval. Polling does not refresh old values. Enter resolution only if known, e.g. 0.01 kWh = 10 Wh; 0 does not estimate resolution and keeps strict energy report age checks.",
+            "data": {
+              "max_age": "Maximum report age",
+              "energy_resolution_kwh": "Known meter resolution (0 = unknown / strict age limit)"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_sensor": "Choose a matching power or energy sensor; its device class does not match.",
+      "invalid_unit": "Power requires W/kW; import energy requires Wh/kWh/MWh.",
+      "invalid_energy": "Choose a nonnegative cumulative import meter with state class total or total_increasing, not a daily meter.",
+      "source_unavailable": "The sensor is missing or has no valid numeric value (unknown/unavailable). Check the source first.",
+      "same_source": "Choose two different measurement sources for power and import energy.",
+      "invalid_settings": "Check direction, target and advanced settings; use values within the allowed ranges.",
+      "sources_changed": "A measurement source has become invalid. Check it and confirm again."
+    }
+  },
+  "selector": {
+    "import_sign": {
+      "options": {
+        "positive": "Import is positive",
+        "negative": "Import is negative",
+        "choose": "Please choose explicitly"
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+name: Validate
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest discover -s tests -p 'test_*.py'
+      - run: node --test tests/test_model.mjs
+      - run: python3 scripts/build_release.py
+      - run: python3 scripts/validate_package.py
+      - name: Isolated Home Assistant runtime
+        run: >-
+          docker run --rm --network none --cap-drop ALL --pids-limit 128 --memory 1g
+          --mount "type=bind,source=$PWD,target=/work,readonly"
+          --entrypoint python ghcr.io/home-assistant/home-assistant:2026.10.2
+          /work/tests/ha_runtime.py
+      - name: Isolated freshness and archive regression
+        run: >-
+          docker run --rm --network none --cap-drop ALL --pids-limit 128 --memory 1g
+          --mount "type=bind,source=$PWD,target=/work,readonly"
+          --entrypoint python ghcr.io/home-assistant/home-assistant:2026.10.2
+          /work/tests/ha_freshness_runtime.py
+      - name: Isolated installation and panel lifecycle
+        run: >-
+          docker run --rm --network none --cap-drop ALL --pids-limit 256 --memory 1g
+          --mount "type=bind,source=$PWD,target=/work,readonly"
+          --entrypoint python ghcr.io/home-assistant/home-assistant:2026.10.2
+          /work/tests/ha_installation_runtime.py
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: home-assistant/actions/hassfest@master
+  hacs:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: hacs/action@main
+        with:
+          category: integration

@@ -1,0 +1,52 @@
+// Exercises the running, separate preview. No credentials or production HA used.
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+import {mkdir,writeFile} from 'node:fs/promises';
+const require=createRequire(import.meta.url);
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const base=process.env.GRID_PEAK_PREVIEW_URL||'http://127.0.0.1:8124';
+const output=new URL('../output/preview-browser/',import.meta.url);
+await mkdir(output,{recursive:true});
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1280,height:1000}});
+const errors=[];
+page.on('pageerror',error=>errors.push(error.message));
+try{
+  const response=await page.goto(base+'/demo/index.html');
+  assert.equal(response.status(),200);
+  await page.locator('.slot').first().waitFor();
+  await page.getByText(/Verbunden · Beispieldaten/).waitFor();
+  const slots=await page.locator('.slot').count();
+  assert.ok([92,96,100].includes(slots));
+  const valid=await page.locator('.slot i').count();
+  assert.ok(valid>0);
+  await page.screenshot({path:new URL('desktop.png',output).pathname,fullPage:true});
+  await page.locator('[data-view=history]').click();
+  assert.ok(await page.locator('.top').count()>0);
+  await page.locator('[data-day=yesterday]').click();
+  await page.waitForFunction(()=>{
+    const card=document.querySelector('grid-peak-card');
+    return card?._history?.date===card?._date;
+  });
+  const yesterday=await page.locator('input[type=date]').inputValue();
+  assert.ok(yesterday);
+  await page.locator('[data-view=devices]').click();
+  assert.equal(await page.locator('.row').count(),3);
+  await page.locator('[data-view=reel]').click();
+  await page.locator('[data-view=overview]').click();
+  await page.locator('#target').fill('1');
+  await page.locator('#apply').click();
+  await page.waitForFunction(()=>document.querySelector('grid-peak-card')?.snapshot?.target_kw===1);
+  await page.setViewportSize({width:390,height:1000});
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.screenshot({path:new URL('mobile.png',output).pathname,fullPage:true});
+  const onboarding=await page.request.get(base+'/api/onboarding');
+  assert.equal(onboarding.status(),200);
+  assert.ok((await onboarding.json()).some(s=>s.step==='user'&&s.done===false));
+  const front=await page.request.get(base+'/lovelace/0');
+  assert.equal(front.status(),200);
+  assert.deepEqual(errors,[]);
+  const result={checks:['HTTP over actual HA server','live synthetic snapshot','history from real monitor','history tabs and date change','three device values','reel return','browser-only target setting','390px without overflow','full HA frontend available','onboarding ready for user'],slots,valid_intervals:valid,page_errors:errors};
+  await writeFile(new URL('results.json',output),JSON.stringify(result,null,2)+'\n');
+  console.log(JSON.stringify(result));
+}finally{await browser.close();}

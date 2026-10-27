@@ -1,0 +1,31 @@
+name: Rückmeldung zur Testversion
+description: Installation, Messwerte, Archiv oder Darstellung prüfen.
+title: '[Test] '
+body:
+  - type: markdown
+    attributes:
+      value: 'Bitte keine Tokens, Zugangsdaten oder vollständigen HA-Konfigurationen anhängen. Persönliche Angaben in Screenshots entfernen.'
+  - type: input
+    id: versions
+    attributes:
+      label: Versionen
+      description: Home Assistant, Grid Peak Monitor, Browser und Installationsart.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Messquellen
+      description: Zählermodell, Einheiten, Bezugs-Vorzeichen, Zählerauflösung und ungefährer Meldetakt. Entity-IDs sind optional.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Beobachtung und erwartetes Ergebnis
+      description: Uhrzeit mit Zeitzone, Schritte, angezeigter Wert und eigener Vergleich. Bei Viertelstunden bitte Anfang und Ende nennen.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Bereinigte Nachweise
+      description: Passender Screenshot oder kurzer Logausschnitt, keine kompletten Exporte.

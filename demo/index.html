@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Netzspitzen · lokale Vorschau</title>
+<style>
+body{margin:0;background:#eee8dc;color:#182729;font:16px/1.5 system-ui,sans-serif}main{max-width:1040px;margin:auto;padding:24px 16px 40px}header{margin-bottom:20px}h1{font-size:clamp(25px,5vw,36px);margin:5px 0}p{margin:8px 0}a{color:#75412d}small{display:block}.tag{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#75412d}.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:15px 0}input,button{font:inherit;border:1px solid #78918a;border-radius:7px;padding:8px;background:#fff9ee;color:#182729}input{width:85px}button{cursor:pointer}#connection{font-size:13px}grid-peak-card{display:block}#failure{padding:20px;border:1px solid #75412d;border-radius:12px}nav{display:flex;gap:20px;flex-wrap:wrap;font-size:14px}
+</style>
+<main>
+<header>
+<div class="tag">Daheim im Detail · lokale Entwicklung</div>
+<h1>Netzspitzen ausprobieren</h1>
+<p>Das ist unsere echte Dashboard-Karte mit <strong>synthetischen Beispieldaten</strong> aus einer separaten HA-Testinstanz auf dem Mac mini. Die Werte sind erfunden und bewegen sich alle fünf Sekunden.</p>
+<nav><a href="/lovelace/0" target="_blank" rel="noopener">Vollständiges Home Assistant öffnen</a><a href="#dashboard">Zur Karte</a></nav>
+<div class="controls"><label for="target">Demo-Ziel in kW</label><input id="target" type="number" min="0.1" max="1000" step="0.1" value="8"><button id="apply">In der Vorschau anwenden</button></div>
+<small>Das Demo-Ziel verändert nur diese Browser-Vorschau. Im vollständigen HA kannst du die echte Ziel-Entität der Testintegration ausprobieren.</small>
+<p id="connection" role="status">Verbindung zur lokalen Testinstanz wird hergestellt …</p>
+</header>
+<div id="dashboard"></div><p id="failure" hidden></p>
+</main>
+<script type="module" src="./preview.js"></script>
+</html>

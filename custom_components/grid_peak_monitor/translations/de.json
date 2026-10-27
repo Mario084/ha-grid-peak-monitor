@@ -1,0 +1,91 @@
+{
+  "title": "Grid Peak Monitor",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Zwei Messquellen auswählen",
+        "description": "Gesamte Leistung am Netzanschluss und fortlaufenden Zähler ausschließlich für Netzimport wählen. Die Liste ist nach Einheiten und Zustandsklasse eingegrenzt; sie kann Netzanschluss, PV, Hausverbrauch und Tageszähler nicht sicher unterscheiden. Die richtige Zuordnung bestätigst du selbst. Eigene Sensoren ohne Geräteklasse sind mit passenden Einheiten möglich. Es werden keine Geräte geschaltet.",
+        "data": {
+          "name": "Name",
+          "power_sensor": "Gesamte Netzleistung",
+          "energy_sensor": "Fortlaufender Netzimport"
+        },
+        "data_description": {
+          "power_sensor": "W oder kW; gesamter Netzanschluss, nicht PV, Hauslast oder einzelne Phase.",
+          "energy_sensor": "Wh/kWh/MWh; nur Netzbezug, fortlaufend, keine regelmäßige Rücksetzung."
+        }
+      },
+      "settings": {
+        "title": "Richtung und Ziel bestätigen",
+        "description": "Bei bekanntem tatsächlichem Netzbezug prüfen: zeigt der Leistungssensor positiv oder negativ? Nicht allein vom aktuellen Wert ableiten – PV und Hausakku können einspeisen. Das Ziel ist dein gewünschter Durchschnitt einer festen Viertelstunde, keine Tarifgrenze und kein Gerätesteuerbefehl. Nach Abschluss findest du die fertige Seite unter „Netzspitzen“ in der Seitenleiste.",
+        "data": {
+          "import_sign": "Bezugsrichtung",
+          "target_kw": "Persönliches Viertelstunden-Ziel"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Erweitert",
+            "description": "Vorgabe 120 Sekunden: nur an den nachgewiesenen Meldetakt anpassen. Abfragen machen alte Werte nicht frisch. Auflösung nur eintragen, wenn bekannt, z. B. 0,01 kWh = 10 Wh; 0 schätzt keine Auflösung und behält die strenge Energie-Meldefrist.",
+            "data": {
+              "max_age": "Maximales Meldealter",
+              "energy_resolution_kwh": "Bekannte Zählerauflösung (0 = unbekannt / strenge Frist)"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_sensor": "Passenden Leistungs- bzw. Energiesensor wählen; die Geräteklasse passt nicht.",
+      "invalid_unit": "Leistung benötigt W/kW; Bezugsenergie benötigt Wh/kWh/MWh.",
+      "invalid_energy": "Fortlaufenden, nichtnegativen Importzähler mit Zustandsklasse total oder total_increasing wählen; keinen Tageszähler.",
+      "source_unavailable": "Der Sensor fehlt oder liefert keine gültige Zahl (unknown/unavailable). Quelle zuerst prüfen.",
+      "same_source": "Zwei unterschiedliche Messquellen für Leistung und Bezugsenergie auswählen.",
+      "invalid_settings": "Richtung, Ziel und erweiterte Einstellungen prüfen; nur Werte im erlaubten Bereich verwenden.",
+      "sources_changed": "Eine Messquelle ist inzwischen ungültig. Quelle prüfen und erneut bestätigen.",
+      "direction_required": "Bezugsrichtung bei tatsächlichem Netzbezug prüfen und bewusst auswählen."
+    },
+    "abort": {
+      "already_configured": "Diese Sensorzuordnung ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Anzeige einstellen",
+        "description": "Bei bekanntem tatsächlichem Netzbezug prüfen: zeigt der Leistungssensor positiv oder negativ? Nicht allein vom aktuellen Wert ableiten – PV und Hausakku können einspeisen. Das Ziel ist dein gewünschter Durchschnitt einer festen Viertelstunde, keine Tarifgrenze und kein Gerätesteuerbefehl. Nach Abschluss findest du die fertige Seite unter „Netzspitzen“ in der Seitenleiste.",
+        "data": {
+          "import_sign": "Bezugsrichtung",
+          "target_kw": "Persönliches Viertelstunden-Ziel"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Erweitert",
+            "description": "Vorgabe 120 Sekunden: nur an den nachgewiesenen Meldetakt anpassen. Abfragen machen alte Werte nicht frisch. Auflösung nur eintragen, wenn bekannt, z. B. 0,01 kWh = 10 Wh; 0 schätzt keine Auflösung und behält die strenge Energie-Meldefrist.",
+            "data": {
+              "max_age": "Maximales Meldealter",
+              "energy_resolution_kwh": "Bekannte Zählerauflösung (0 = unbekannt / strenge Frist)"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_sensor": "Passenden Leistungs- bzw. Energiesensor wählen; die Geräteklasse passt nicht.",
+      "invalid_unit": "Leistung benötigt W/kW; Bezugsenergie benötigt Wh/kWh/MWh.",
+      "invalid_energy": "Fortlaufenden, nichtnegativen Importzähler mit Zustandsklasse total oder total_increasing wählen; keinen Tageszähler.",
+      "source_unavailable": "Der Sensor fehlt oder liefert keine gültige Zahl (unknown/unavailable). Quelle zuerst prüfen.",
+      "same_source": "Zwei unterschiedliche Messquellen für Leistung und Bezugsenergie auswählen.",
+      "invalid_settings": "Richtung, Ziel und erweiterte Einstellungen prüfen; nur Werte im erlaubten Bereich verwenden.",
+      "sources_changed": "Eine Messquelle ist inzwischen ungültig. Quelle prüfen und erneut bestätigen."
+    }
+  },
+  "selector": {
+    "import_sign": {
+      "options": {
+        "positive": "Bezug ist positiv",
+        "negative": "Bezug ist negativ",
+        "choose": "Bitte bewusst wählen"
+      }
+    }
+  }
+}
