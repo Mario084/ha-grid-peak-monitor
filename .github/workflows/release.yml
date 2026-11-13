@@ -1,0 +1,73 @@
+name: Publish tested alpha
+
+on:
+  workflow_run:
+    workflows: [Validate]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-grid-peak-alpha
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TESTED_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Require an explicit alpha release commit
+        id: candidate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          from pathlib import Path
+          version = json.loads(Path('custom_components/grid_peak_monitor/manifest.json').read_text())['version']
+          title = subprocess.check_output(['git', 'log', '-1', '--format=%s'], text=True).strip()
+          main_sha = subprocess.check_output(['gh', 'api', f"repos/{os.environ['GH_REPO']}/git/ref/heads/main", '--jq', '.object.sha'], text=True).strip()
+          publish = (re.fullmatch(r'\d+\.\d+\.\d+-alpha\.\d+', version) is not None
+                     and title == f'Release Grid Peak Monitor {version}'
+                     and main_sha == os.environ['TESTED_SHA'])
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'publish={str(publish).lower()}\nversion={version}\n')
+          PY
+      - name: Build the tested source and publish a prerelease
+        if: steps.candidate.outputs.publish == 'true'
+        env:
+          RELEASE_VERSION: ${{ steps.candidate.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v$RELEASE_VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release already exists; keeping its tag and assets unchanged."
+            exit 0
+          fi
+          python3 scripts/build_release.py
+          python3 scripts/validate_package.py
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          version = os.environ['RELEASE_VERSION']
+          notes = Path('RELEASE_NOTES.md').read_text().split('\n---\n', 1)[0]
+          notes += f'\n\n[Kurze Installationsanleitung](https://github.com/{os.environ["GH_REPO"]}/blob/v{version}/docs/SCHNELLSTART.md)\n'
+          Path('release-body.md').write_text(notes)
+          PY
+          dist="dist/$RELEASE_VERSION"
+          gh release create "$tag" --target "$TESTED_SHA" --prerelease --latest=false \
+            --title "Grid Peak Monitor $RELEASE_VERSION – Messquellen später ändern" \
+            --notes-file release-body.md "$dist"/*.zip "$dist/SHA256SUMS.txt" \
+            "docs/SCHNELLSTART.md#Kurze Installationsanleitung" "docs/TESTER.md#Tester-Anhang"

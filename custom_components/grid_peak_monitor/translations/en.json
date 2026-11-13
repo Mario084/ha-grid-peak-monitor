@@ -32,6 +32,36 @@
             }
           }
         }
+      },
+      "reconfigure": {
+        "title": "Change measurement sources",
+        "description": "Choose new sensors for this monitor. Its entities and your personal target are retained. Changing sources starts a new local history and monthly peak; the previous history is backed up locally first. Confirm the change in the next step. Use Configure to change the target or report age.",
+        "data": {
+          "power_sensor": "Total grid power",
+          "energy_sensor": "Cumulative grid import"
+        },
+        "data_description": {
+          "power_sensor": "W or kW; entire grid connection, not solar, household load or a single phase.",
+          "energy_sensor": "Wh/kWh/MWh; grid imports only, cumulative, no regular reset."
+        }
+      },
+      "reconfigure_confirm": {
+        "title": "Confirm source change",
+        "description": "Saving switches the measurement sources. The previous history remains in a local backup and is no longer used in the active display; there is no restore interface yet. Entities are retained. Confirm the import direction again during actual grid import. A new energy meter initially resets known resolution to 0: check the correct resolution and reporting interval under Advanced. Measurements restart with the next complete quarter hour.",
+        "data": {
+          "import_sign": "Import direction",
+          "target_kw": "Personal quarter-hour target"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Advanced",
+            "description": "Default 120 seconds: adjust only to the verified reporting interval. Polling does not refresh old values. Enter resolution only if known, e.g. 0.01 kWh = 10 Wh; 0 does not estimate resolution and keeps strict energy report age checks.",
+            "data": {
+              "max_age": "Maximum report age",
+              "energy_resolution_kwh": "Known meter resolution (0 = unknown / strict age limit)"
+            }
+          }
+        }
       }
     },
     "error": {
@@ -42,17 +72,20 @@
       "same_source": "Choose two different measurement sources for power and import energy.",
       "invalid_settings": "Check direction, target and advanced settings; use values within the allowed ranges.",
       "sources_changed": "A measurement source has become invalid. Check it and confirm again.",
-      "direction_required": "Check during actual grid import and explicitly select the import direction."
+      "direction_required": "Check during actual grid import and explicitly select the import direction.",
+      "already_configured": "This source pairing is already configured."
     },
     "abort": {
-      "already_configured": "This source pairing is already configured."
+      "already_configured": "This source pairing is already configured.",
+      "sources_unchanged": "Sources unchanged. Existing history is retained.",
+      "reconfigure_successful": "Measurement sources updated. The monitor is reloading."
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "Display settings",
-        "description": "Check during independently known grid import: does the power sensor show positive or negative? Do not infer this from its current sign alone: solar and batteries can export. The target is your desired fixed-quarter average, not a tariff limit or a device command. Once finished, open Peak Monitor (Netzspitzen) in the sidebar.",
+        "description": "Check during independently known grid import: does the power sensor show positive or negative? Do not infer this from its current sign alone: solar and batteries can export. The target is your desired fixed-quarter average, not a tariff limit or a device command. Once finished, open Peak Monitor (Netzspitzen) in the sidebar. To change sensor entities, use Reconfigure in the integration entry menu.",
         "data": {
           "import_sign": "Import direction",
           "target_kw": "Personal quarter-hour target"

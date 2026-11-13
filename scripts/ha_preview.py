@@ -98,7 +98,7 @@ async def main():
     await bootstrap.async_from_config_dict({
         'homeassistant':{'name':'Netzspitzen · lokale Demo','time_zone':'Europe/Vienna','country':'AT','latitude':48.2,'longitude':16.3,'unit_system':'metric'},
         'http':{'server_host':'0.0.0.0','server_port':8123},
-        'frontend':{},'onboarding':{},'lovelace':{'mode':'yaml','resources':[{'url':'/grid_peak_monitor_static/grid-peak-card.js?v=0.1.0-alpha.6','type':'module'}]},
+        'frontend':{},'onboarding':{},'lovelace':{'mode':'yaml','resources':[{'url':'/grid_peak_monitor_static/grid-peak-card.js?v=0.1.0-alpha.7','type':'module'}]},
         'grid_peak_monitor':{},
     }, hass)
     view = PreviewData(None)

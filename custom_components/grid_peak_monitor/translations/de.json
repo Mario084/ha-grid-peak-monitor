@@ -32,6 +32,36 @@
             }
           }
         }
+      },
+      "reconfigure": {
+        "title": "Messquellen ändern",
+        "description": "Wähle neue Sensoren für diesen Monitor. Seine Entitäten und dein persönliches Ziel bleiben erhalten. Bei einem Quellenwechsel werden der lokale Verlauf und die Monatsspitze neu begonnen. Der bisherige Verlauf wird zuvor lokal gesichert. Im nächsten Schritt bestätigst du den Wechsel. Zum Ändern von Ziel oder Meldealter verwende „Konfigurieren“.",
+        "data": {
+          "power_sensor": "Gesamte Netzleistung",
+          "energy_sensor": "Fortlaufender Netzimport"
+        },
+        "data_description": {
+          "power_sensor": "W oder kW; gesamter Netzanschluss, nicht PV, Hauslast oder einzelne Phase.",
+          "energy_sensor": "Wh/kWh/MWh; nur Netzbezug, fortlaufend, keine regelmäßige Rücksetzung."
+        }
+      },
+      "reconfigure_confirm": {
+        "title": "Quellenwechsel bestätigen",
+        "description": "Mit dem Speichern wechselst du die Messquellen. Der bisherige Verlauf bleibt als lokale Sicherung erhalten und wird nicht mehr in der aktiven Anzeige verwendet. Es gibt dafür noch keine Wiederherstellung in der Oberfläche. Entitäten bleiben erhalten. Prüfe die Bezugsrichtung bei tatsächlichem Netzbezug erneut. Bei einem neuen Energiezähler wird die bekannte Auflösung zunächst auf 0 gesetzt: passende Auflösung und Meldetakt unter „Erweitert“ prüfen. Danach beginnt die Messung mit der nächsten vollständigen Viertelstunde.",
+        "data": {
+          "import_sign": "Bezugsrichtung",
+          "target_kw": "Persönliches Viertelstunden-Ziel"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Erweitert",
+            "description": "Vorgabe 120 Sekunden: nur an den nachgewiesenen Meldetakt anpassen. Abfragen machen alte Werte nicht frisch. Auflösung nur eintragen, wenn bekannt, z. B. 0,01 kWh = 10 Wh; 0 schätzt keine Auflösung und behält die strenge Energie-Meldefrist.",
+            "data": {
+              "max_age": "Maximales Meldealter",
+              "energy_resolution_kwh": "Bekannte Zählerauflösung (0 = unbekannt / strenge Frist)"
+            }
+          }
+        }
       }
     },
     "error": {
@@ -42,17 +72,20 @@
       "same_source": "Zwei unterschiedliche Messquellen für Leistung und Bezugsenergie auswählen.",
       "invalid_settings": "Richtung, Ziel und erweiterte Einstellungen prüfen; nur Werte im erlaubten Bereich verwenden.",
       "sources_changed": "Eine Messquelle ist inzwischen ungültig. Quelle prüfen und erneut bestätigen.",
-      "direction_required": "Bezugsrichtung bei tatsächlichem Netzbezug prüfen und bewusst auswählen."
+      "direction_required": "Bezugsrichtung bei tatsächlichem Netzbezug prüfen und bewusst auswählen.",
+      "already_configured": "Diese Sensorzuordnung ist bereits eingerichtet."
     },
     "abort": {
-      "already_configured": "Diese Sensorzuordnung ist bereits eingerichtet."
+      "already_configured": "Diese Sensorzuordnung ist bereits eingerichtet.",
+      "sources_unchanged": "Messquellen unverändert. Der bestehende Verlauf bleibt erhalten.",
+      "reconfigure_successful": "Messquellen aktualisiert. Der Monitor wird neu geladen."
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "Anzeige einstellen",
-        "description": "Bei bekanntem tatsächlichem Netzbezug prüfen: zeigt der Leistungssensor positiv oder negativ? Nicht allein vom aktuellen Wert ableiten – PV und Hausakku können einspeisen. Das Ziel ist dein gewünschter Durchschnitt einer festen Viertelstunde, keine Tarifgrenze und kein Gerätesteuerbefehl. Nach Abschluss findest du die fertige Seite unter „Netzspitzen“ in der Seitenleiste.",
+        "description": "Bei bekanntem tatsächlichem Netzbezug prüfen: zeigt der Leistungssensor positiv oder negativ? Nicht allein vom aktuellen Wert ableiten – PV und Hausakku können einspeisen. Das Ziel ist dein gewünschter Durchschnitt einer festen Viertelstunde, keine Tarifgrenze und kein Gerätesteuerbefehl. Nach Abschluss findest du die fertige Seite unter „Netzspitzen“ in der Seitenleiste. Zum Ändern der Sensor-Entitäten nutze im Menü des Integrationseintrags „Neu konfigurieren“.",
         "data": {
           "import_sign": "Bezugsrichtung",
           "target_kw": "Persönliches Viertelstunden-Ziel"

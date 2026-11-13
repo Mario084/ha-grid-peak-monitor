@@ -1,3 +1,42 @@
+# Alpha 7 · Quellenwechsel und Testfreigabe (13.11.2026)
+
+Alpha 7 ergänzt einen zweistufigen Reconfigure-Dialog für die beiden Messquellen. Vorzeichen, Ziel und erweiterte Einstellungen werden vor dem Wechsel bestätigt. Die Berechnungsformeln und das aktive Archivformat bleiben unverändert.
+
+## Aktuelle Prüfung
+
+- 90 Python-Tests und 9 JavaScript-Modelltests bestanden.
+- Isolierte offizielle HA-Container, Version 2026.10.2: bisheriger Laufzeittest, Frische-/Archivregression und Installation-/Panel-Lifecycle geprüft.
+- Neue reale Config-Flow-Prüfung mit HA 2026.10.2 und 2026.10.4: Vorbelegung, unveränderte Quellen, Abbrechen, ungültige Quellen, doppelte Sensorpaare, Quellenverlust zwischen den Dialogen und explizite Bezugsrichtung.
+- Erhalt der Monitor-/Entity-IDs, des Ziels und Meldealters; korrekte neue Listener, frischer Zählerstand ohne Übernahme alter Grenzen, neuer lokaler Verlauf/Monatspeak und Fortbestand nach Reload.
+- Vorheriges Archiv lokal gesichert. Ein simulierter fehlgeschlagener Sicherungsschreibvorgang lässt die aktive Originaldatei erhalten; der Monitor kann anschließend über Reconfigure wiederhergestellt werden.
+- Alle Laufzeitprüfungen verwenden neue temporäre Konfigurationen und künstliche Messwerte, ohne Netzwerk und ohne produktive HA-Volumes.
+
+Reproduzieren zusätzlich zu den unten aufgeführten Prüfungen:
+
+```sh
+docker run --rm --network none --cap-drop ALL --pids-limit 256 --memory 1g \
+  --mount "type=bind,source=$PWD,target=/work,readonly" \
+  --entrypoint python ghcr.io/home-assistant/home-assistant:2026.10.2 \
+  /work/tests/ha_reconfigure_runtime.py
+```
+
+Derselbe Test wurde auch mit `2026.10.4` ausgeführt. Ein eigener mehrtägiger Alpha7-Test ist noch offen. Die neue Quellenwahl wurde über den tatsächlichen HA-Config-Flow geprüft; eine zusätzliche Browserprüfung dieses Dialogs ist nicht Teil dieses Nachweises.
+
+## Nachgetragene Alpha6-Nachweise
+
+Die folgenden Prüfungen erfolgten nach dem ursprünglichen Bericht. Die älteren Abschnitte darunter beschreiben ihren damaligen Stand.
+
+- **GitHub:** öffentliche Validate-Läufe einschließlich hassfest und HACS am 27.10. bestanden: [Prüflauf](https://github.com/Mario084/ha-grid-peak-monitor/actions/runs/40531413996).
+- **Echte HACS-Installation am 05.11.:** HACS 2.0.5, HA 2026.10.4, öffentliches Custom-Repository, ausgewähltes Prerelease, regulärer Neustart und Einrichtung über die HA-Oberfläche. Alle 18 Komponentendateien identisch zum veröffentlichten Alpha6-Installer. Verwendet wurden synthetische Quellen.
+- **Upgrade Alpha 5 → Alpha 6:** IDs, Optionen, Ziel und synthetisches Archiv erhalten.
+- **Live-Beobachtung:** erster Abschnitt rund 59½ Stunden, durch vollen Speicher unterbrochen; zweiter Abschnitt rund 48 Stunden. Zusammen 77.308 Auditpunkte, davon 75.635 gültig. Bei diesen Punkten keine Abweichung in der Nachrechnung von verbrauchter Energie, Minimum und Viertelstundenprognose. Kein Ersatz für einen unabhängigen Ende-zu-Ende-Vergleich mit einem Netzbetreiber.
+- Im zweiten Abschnitt 191 abgeschlossene Archivzeilen: 184 gültig, zwei mit ungültiger Energiequelle und fünf mit veralteter Leistung. Der letzte laufende Viertelstundenabschnitt wurde vor seinem Abschluss beendet. Datenlücken bleiben sichtbar; der Lauf wird nicht als lückenlos bestandener 72-Stunden-Test ausgegeben.
+- Die gesichteten Archiv-kW-Werte blieben im Audit unverändert. Sieben Unterschiede zwischen Audit und gespeichertem Qualitätskennzeichen betreffen ausschließlich bereits ungültige Intervalle: Beim Wiederladen werden diese zu `incomplete` vereinheitlicht.
+
+Private Rohdaten, Adressen, Kennungen, Zugangsdaten und Screenshots sind nicht Bestandteil des Releases. Veröffentlichte Angaben sind auf technische Testzusammenfassungen begrenzt.
+
+---
+
 # Alpha 6 · lokale Installationsvereinfachung (27.10.2026)
 
 - 90 vorhandene Python-Tests und 9 JavaScript-Modelltests bestanden. Rechenkern, Coordinator, Sensor-/Number-Unique-IDs und Archivformat gegenüber Alpha 5 unverändert.

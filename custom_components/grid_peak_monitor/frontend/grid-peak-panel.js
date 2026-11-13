@@ -1,5 +1,5 @@
 // A supported custom panel hosts the same card renderer as personal dashboards.
-import './grid-peak-card.js?v=0.1.0-alpha.6';
+import './grid-peak-card.js?v=0.1.0-alpha.7';
 import {escape} from './model.js';
 
 class GridPeakPanel extends HTMLElement {
