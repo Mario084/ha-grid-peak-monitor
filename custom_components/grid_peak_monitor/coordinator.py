@@ -1,8 +1,10 @@
 """HA adapter around the independently testable accounting core."""
 from datetime import timedelta
 import logging
+from uuid import uuid4
 
 from homeassistant.core import callback
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.event import async_track_state_change_event, async_track_state_report_event
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -52,6 +54,14 @@ class PeakCoordinator(DataUpdateCoordinator):
         signature = [self.options[POWER], self.options[ENERGY]]
         if data and data.get("sources") == signature:
             self.monitor.restore(data.get("engine"), dt_util.utcnow().timestamp())
+        elif data:
+            # Never combine different counters or overwrite their only archive.
+            key = f"{DOMAIN}.{self.entry.entry_id}.source_backup.{uuid4().hex}"
+            await Store(self.hass, 1, key).async_save(data)
+            # Store logs write failures instead of raising. Verify the saved
+            # backup before computing/scheduling a replacement active archive.
+            if await Store(self.hass, 1, key).async_load() != data:
+                raise ConfigEntryNotReady("Previous source archive could not be backed up")
         self.data = self._compute()
         ids = [self.options[POWER], self.options[ENERGY]]
         self._unsubs = [async_track_state_change_event(self.hass, ids, self._changed),

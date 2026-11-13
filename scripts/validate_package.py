@@ -27,7 +27,7 @@ def main():
     assert english == json.loads((COMPONENT / "translations/en.json").read_text())
     for language in ("en", "de"):
         strings = json.loads((COMPONENT / f"translations/{language}.json").read_text())
-        assert set(strings["config"]["step"]) == {"user", "settings"}
+        assert set(strings["config"]["step"]) == {"user", "settings", "reconfigure", "reconfigure_confirm"}
         assert "advanced" in strings["config"]["step"]["settings"]["sections"]
         assert set(strings["selector"]["import_sign"]["options"]) == {"choose", "positive", "negative"}
     dist = ROOT / "dist" / version

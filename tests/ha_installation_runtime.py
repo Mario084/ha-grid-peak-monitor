@@ -88,7 +88,7 @@ async def main():
             await hass.async_block_till_done()
             panel = hass.data["frontend_panels"]["grid-peak-monitor"]
             assert panel.config["_panel_custom"]["name"] == "grid-peak-panel"
-            assert panel.config["_panel_custom"]["module_url"].endswith("grid-peak-panel.js?v=0.1.0-alpha.6")
+            assert panel.config["_panel_custom"]["module_url"].endswith("grid-peak-panel.js?v=0.1.0-alpha.7")
             second = await create("two")
             assert len([p for p in hass.data["frontend_panels"] if p == "grid-peak-monitor"]) == 1
             assert not any(hass.states.get(entity_id).attributes.get("grid_peak_monitor") for entity_id in source_selector(hass, "power_sensor").config["include_entities"])

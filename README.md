@@ -2,7 +2,7 @@
 
 **Netzspitzen im Blick: eine schlanke Home-Assistant-Integration mit direkt verfügbarer Netzspitzen-Seite und optionaler Dashboard-Karte.**
 
-**Testversion 0.1.0-alpha.6 für einen kleinen Testkreis.** Von Daheim im Detail, geprüft mit Home Assistant **2026.10.2**. Die korrigierte Fassung ist für einen Test mit 1–2 Personen vorbereitet. Noch kein stabiles Release und kein HACS-Standardpaket.
+**Testversion 0.1.0-alpha.7 für einen kleinen Testkreis.** Von Daheim im Detail, geprüft mit Home Assistant **2026.10.2 und 2026.10.4**. Die korrigierte Fassung ist für einen Test mit 1–2 Personen vorbereitet. Noch kein stabiles Release und kein HACS-Standardpaket.
 
 ➡️ **[Schnell installieren](docs/SCHNELLSTART.md)** · [Ausführliche Tester-Anleitung](docs/TESTER.md) · [Release-Notizen](RELEASE_NOTES.md)
 
@@ -13,6 +13,7 @@ Du wählst zwei bereits vorhandene Sensoren aus: aktuelle Netzleistung und fortl
 ## Was enthalten ist
 
 - Einrichtung über **Einstellungen → Geräte & Dienste → Integration hinzufügen → Grid Peak Monitor**.
+- Messquellen nachträglich über **⋮ → Neu konfigurieren** ändern. Monitor-Entitäten bleiben erhalten; neue Quellen starten mit frischem Verlauf und lokaler Sicherung des bisherigen Archivs.
 - Neun Sensoren, darunter Prognose, unvermeidbares Minimum, letzte Viertelstunde, bekannte lokale Monatsspitze und verbleibender Leistungsspielraum.
 - Persönliches Leistungsziel direkt in der Karte ändern und speichern; der Wert bleibt über Neustarts erhalten.
 - Eigene Netzspitzen-Seite in der Seitenleiste, Mehrmonitorauswahl und zusätzlich optionale Karte mit Überblick, Tagesverlauf, lokalen Monatsmaxima, Geräte-Momentanwerten und 9:16-Ansicht. Kein `button-card` erforderlich.
@@ -22,7 +23,7 @@ Du wählst zwei bereits vorhandene Sensoren aus: aktuelle Netzleistung und fortl
 
 ## Voraussetzungen
 
-- Für diese Alpha: Home Assistant **2026.10.2**. Ältere Versionen sind noch nicht geprüft.
+- Für diese Alpha: Home Assistant **2026.10.2 und 2026.10.4**. Ältere Versionen sind noch nicht geprüft.
 - Ein Leistungssensor in `W` oder `kW`. Bei vorzeichenbehafteter Netzleistung lässt sich „Bezug positiv/negativ“ auswählen.
 - Ein **fortlaufender Bezugsenergiezähler** in `Wh`, `kWh` oder `MWh`, mit `state_class: total` oder `total_increasing`.
 - Der Energiezähler zählt ausschließlich Import aus dem Netz. Ein saldierter Zähler, Haushaltsverbrauch oder PV-Ertrag passt nicht dazu. Tages-/Monatszähler mit regelmäßigen Rücksetzungen verursachen Datenlücken.
@@ -32,7 +33,7 @@ Du wählst zwei bereits vorhandene Sensoren aus: aktuelle Netzleistung und fortl
 
 Der [Schnellstart](docs/SCHNELLSTART.md) führt durch vier Schritte: Backup und Installation, HA-Neustart und Integration hinzufügen, zwei Messquellen plus Richtung/Ziel bestätigen, **Netzspitzen** in der Seitenleiste öffnen. Für die erste Nutzung sind weder Dashboardbearbeitung noch eine manuell eingetragene JavaScript-Ressource erforderlich.
 
-Mit vorhandenem HACS kann ein öffentlich zugänglicher, passend strukturierter Projektstand als benutzerdefiniertes Repository der Kategorie **Integration** installiert werden. Eine echte HACS-Installation ist bislang nicht nachgewiesen; die Repositorystruktur ist vorbereitet und geprüft. Anwender ohne HACS verwenden das Installations-ZIP aus den Release-Anhängen. [Optionale Karte im eigenen Dashboard](docs/DASHBOARD-KARTE.md).
+Mit vorhandenem HACS kann ein öffentlich zugänglicher, passend strukturierter Projektstand als benutzerdefiniertes Repository der Kategorie **Integration** installiert werden. Eine echte HACS-Installation der Alpha 6 wurde mit HACS 2.0.5 und HA 2026.10.4 geprüft. Alpha 7 ergänzt den nachträglichen Quellenwechsel; die HACS-Struktur bleibt gleich. Anwender ohne HACS verwenden das Installations-ZIP aus den Release-Anhängen. [Optionale Karte im eigenen Dashboard](docs/DASHBOARD-KARTE.md).
 
 Der Assistent grenzt die Quellen nach Einheiten und Klassen ein, errät aber keine physikalische Zuordnung oder Bezugsrichtung. Meldealter und bekannte Zählerauflösung stehen im eingeklappten Abschnitt **Erweitert**. Bei Updates vorhandene Integration weiterverwenden; IDs, Ziel und Archiv bleiben im bisherigen Format erhalten.
 
@@ -77,11 +78,11 @@ Portalviertel ersetzen in der Tagesgrafik genau das zugehörige UTC-Intervall un
 
 ## Datenschutz, Grenzen und Entfernung
 
-Die Integration liest nur die ausgewählten vorhandenen Entitäten. Sie schreibt ihre eigenen Entitäten, Optionen und Archivdaten unter `.storage/grid_peak_monitor.<entry_id>`. Sie ruft keine externen Dienste auf und enthält weder deine HA-Konfiguration noch private Adressen, Zugangsdaten oder Gerätekennungen. Tests verwenden erfundene Messwerte; der Laufzeittest erzeugt einen flüchtigen Zugangstoken ausschließlich innerhalb der wegwerfbaren Testinstanz.
+Die Integration liest nur die ausgewählten vorhandenen Entitäten. Sie schreibt ihre eigenen Entitäten, Optionen und Archivdaten unter `.storage/grid_peak_monitor.<entry_id>`. Beim Quellenwechsel entsteht zusätzlich eine lokale Sicherung unter `.storage/grid_peak_monitor.<entry_id>.source_backup.<kennung>`. Alte Sicherungen bleiben erhalten; eine Wiederherstellungsoberfläche ist nicht enthalten. Sie ruft keine externen Dienste auf und enthält weder deine HA-Konfiguration noch private Adressen, Zugangsdaten oder Gerätekennungen. Tests verwenden erfundene Messwerte; der Laufzeittest erzeugt einen flüchtigen Zugangstoken ausschließlich innerhalb der wegwerfbaren Testinstanz.
 
 Beim Entfernen: Integration über Geräte & Dienste löschen; die eigene Seite verschwindet nach Entfernen des letzten geladenen Monitors automatisch. Optionale Karten/Ressource separat entfernen und Komponentenordner löschen. Der eigene Archivspeicher kann zurückbleiben; siehe [Daten und Architektur](docs/ARCHITEKTUR.md), bevor du ihn bei gestopptem Test-HA gezielt entfernst.
 
-Noch offen: neuer Langzeittest der korrigierten Fassung, andere Zähler/HA-Versionen, DS916-Praxistest, Live-Abgleich des optionalen Portaladapters und vollständige öffentliche HACS-Validierung. Der erste rund 47½-stündige Live-Test fand den in Alpha 4 korrigierten Archivfehler und gilt nicht als bestanden. Es gibt keine aktive Laststeuerung, Tarifberechnung oder Übernahme älterer Dashboard-Archive.
+Alpha 6 wurde in zwei Live-Abschnitten von rund 59½ und 48 Stunden geprüft; der erste wurde durch vollen Speicher unterbrochen, der zweite enthält einzelne ungültige Quellintervalle. Ein durchgehender 72-Stunden-Lauf und ein eigener Alpha7-Langzeittest stehen noch aus. Ebenso offen: weitere Zähler/HA-Versionen, DS916-Praxistest und Live-Abgleich des optionalen Portaladapters. Die öffentliche GitHub-/HACS-Validierung der Alpha 6 ist bestanden. Der erste rund 47½-stündige Live-Test fand den in Alpha 4 korrigierten Archivfehler und gilt nicht als bestanden. Es gibt keine aktive Laststeuerung, Tarifberechnung oder Übernahme älterer Dashboard-Archive.
 
 ## Entwicklung und Testnachweise
 
@@ -99,9 +100,9 @@ Home Assistant wird für den Laufzeittest ausschließlich in einem **neuen Conta
 
 ## GitHub und HACS
 
-Projekt: [Mario084/ha-grid-peak-monitor](https://github.com/Mario084/ha-grid-peak-monitor). Den [Alpha6-Installer und die Kurzanleitung](https://github.com/Mario084/ha-grid-peak-monitor/releases/tag/v0.1.0-alpha.6) findest du im Prerelease.
+Projekt: [Mario084/ha-grid-peak-monitor](https://github.com/Mario084/ha-grid-peak-monitor). Den [Alpha7-Installer und die Kurzanleitung](https://github.com/Mario084/ha-grid-peak-monitor/releases/tag/v0.1.0-alpha.7) findest du im Prerelease.
 
-Mit vorhandenem HACS das Repository als **benutzerdefiniertes Repository**, Kategorie **Integration**, hinzufügen. Eine Aufnahme in den Standardkatalog ist dafür nicht nötig und wird nicht behauptet. Eine echte HACS-Installation ist noch als zusätzlicher Nachweis offen. Die eigene Netzspitzen-Seite benötigt keinen Ressourceneintrag; nur die optionale Karte im persönlichen Dashboard wird als Ressource eingetragen.
+Mit vorhandenem HACS das Repository als **benutzerdefiniertes Repository**, Kategorie **Integration**, hinzufügen. Eine Aufnahme in den Standardkatalog ist dafür nicht nötig und wird nicht behauptet. Der echte Installationsnachweis der Alpha 6 und die Abgrenzung zur Alpha 7 stehen im [Testbericht](docs/TESTBERICHT.md). Die eigene Netzspitzen-Seite benötigt keinen Ressourceneintrag; nur die optionale Karte im persönlichen Dashboard wird als Ressource eingetragen.
 
 [Übergabe und Veröffentlichung](docs/VEROEFFENTLICHUNG.md) · [MIT-Lizenz](LICENSE)
 

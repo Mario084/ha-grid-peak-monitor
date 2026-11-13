@@ -79,6 +79,70 @@ def normalized(data, defaults=None):
 class PeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
+    def _source_errors(self, sources, *, exclude_entry_id=None):
+        errors = {}
+        for key in (POWER, ENERGY):
+            if error := source_error(self.hass.states.get(sources[key]), key):
+                errors[key] = error
+        if sources[POWER] == sources[ENERGY]:
+            errors[ENERGY] = "same_source"
+        for entry in self._async_current_entries():
+            current = {**entry.data, **entry.options}
+            if entry.entry_id != exclude_entry_id and all(current.get(k) == sources[k] for k in (POWER, ENERGY)):
+                errors["base"] = "already_configured"
+        return errors
+
+    async def async_step_reconfigure(self, user_input=None):
+        """Replace inputs on the existing monitor, retaining its entity IDs."""
+        entry = self._get_reconfigure_entry()
+        defaults = {**entry.data, **entry.options}
+        errors = {}
+        if user_input is not None:
+            errors = self._source_errors(user_input, exclude_entry_id=entry.entry_id)
+            if not errors:
+                if all(user_input[k] == defaults[k] for k in (POWER, ENERGY)):
+                    return self.async_abort(reason="sources_unchanged")
+                self._sources = {k: user_input[k] for k in (POWER, ENERGY)}
+                return await self.async_step_reconfigure_confirm()
+        return self.async_show_form(step_id="reconfigure", data_schema=vol.Schema({
+            vol.Required(k, default=(user_input or defaults)[k]): source_selector(self.hass, k)
+            for k in (POWER, ENERGY)
+        }), errors=errors)
+
+    async def async_step_reconfigure_confirm(self, user_input=None):
+        entry = self._get_reconfigure_entry()
+        defaults = {**entry.data, **entry.options}
+        # A different energy entity may have a different pulse size.
+        if self._sources[ENERGY] != defaults[ENERGY]:
+            defaults[RESOLUTION] = 0
+        errors = {}
+        if user_input is not None:
+            source_errors = self._source_errors(self._sources, exclude_entry_id=entry.entry_id)
+            if source_errors:
+                errors["base"] = source_errors.get("base", "sources_changed")
+            if user_input.get(SIGN) == "choose":
+                errors[SIGN] = "direction_required"
+            try:
+                updated = normalized(user_input, defaults)
+            except (KeyError, ValueError, TypeError):
+                if not errors:
+                    errors["base"] = "invalid_settings"
+            else:
+                if not errors:
+                    options = {k: v for k, v in entry.options.items() if k not in (POWER, ENERGY)}
+                    options.update({k: updated[k] for k in (SIGN, TARGET, MAX_AGE, RESOLUTION)})
+                    # The existing update listener performs one reload after this
+                    # atomic data/options/identity update (HA 2026.12 compatible).
+                    self.hass.config_entries.async_update_entry(
+                        entry, data={**entry.data, **self._sources}, options=options,
+                        unique_id=self._sources[POWER] + "|" + self._sources[ENERGY])
+                    if not entry.update_listeners:
+                        self.hass.config_entries.async_schedule_reload(entry.entry_id)
+                    return self.async_abort(reason="reconfigure_successful")
+        return self.async_show_form(step_id="reconfigure_confirm",
+            data_schema=vol.Schema(settings({**defaults, **(user_input or {})}, require_direction=True)),
+            errors=errors)
+
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is not None:

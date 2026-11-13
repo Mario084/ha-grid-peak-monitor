@@ -34,6 +34,12 @@ jobs:
           --mount "type=bind,source=$PWD,target=/work,readonly"
           --entrypoint python ghcr.io/home-assistant/home-assistant:2026.10.2
           /work/tests/ha_installation_runtime.py
+      - name: Isolated source reconfiguration and archive backup
+        run: >-
+          docker run --rm --network none --cap-drop ALL --pids-limit 256 --memory 1g
+          --mount "type=bind,source=$PWD,target=/work,readonly"
+          --entrypoint python ghcr.io/home-assistant/home-assistant:2026.10.2
+          /work/tests/ha_reconfigure_runtime.py
   hassfest:
     runs-on: ubuntu-latest
     steps:

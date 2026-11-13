@@ -1,6 +1,6 @@
 """Configuration and resource identifiers."""
 DOMAIN = "grid_peak_monitor"
-VERSION = "0.1.0-alpha.6"
+VERSION = "0.1.0-alpha.7"
 NAME = "Netzspitzen"
 POWER = "power_sensor"
 ENERGY = "energy_sensor"

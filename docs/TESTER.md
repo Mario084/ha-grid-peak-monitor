@@ -4,7 +4,7 @@ Danke fürs Testen. Diese Version ist eine **Alpha für einen kleinen Testkreis*
 
 ## Einrichtung
 
-Zuerst den [Schnellstart mit vier Schritten](SCHNELLSTART.md) verwenden. Die folgenden Punkte sind zusätzliche Alphatests nach der Einrichtung, keine weiteren Installationsschritte.
+Zuerst den [Schnellstart](SCHNELLSTART.md) verwenden. Die folgenden Punkte sind zusätzliche Alphatests nach der Einrichtung, keine weiteren Installationsschritte.
 
 ## Anhang A · Zusätzliche Testerchecks
 
@@ -13,6 +13,7 @@ Zuerst den [Schnellstart mit vier Schritten](SCHNELLSTART.md) verwenden. Die fol
 - Bei PV/Hausakku kann der Energiezähler lange unverändert sein. Mit passender Zählerauflösung und frischer Netzleistung muss das plausibel bleiben.
 - Zwei bis drei vollständige Intervalle vergleichen. kWh-Differenz zwischen zwei passenden Viertelstundengrenzen × 4 ergibt den Durchschnitt in kW. Werte ohne Messpunkte genau auf der Grenze sind Schätzungen, keine exakten Referenzmessungen.
 - Verlauf öffnen: vorhandene Viertel anklicken, Datum wechseln und die Darstellung am Handy ausprobieren. Bei einer echten Datenunterbrechung bleiben betroffene Intervalle unvollständig.
+- Sensoren über **⋮ → Neu konfigurieren** ändern. Vor dem Bestätigen prüfen, ob neue Quellen, Bezugsrichtung und Zählerauflösung passen. Entitäten bleiben erhalten; aktiver Verlauf und Monatsspitze beginnen neu, das bisherige Archiv wird lokal gesichert. Abbrechen muss alles unverändert lassen.
 - HA einmal regulär neu starten. Vorhandene verlässliche Intervalle sollen erhalten bleiben. Nach einer Unterbrechung muss die Beobachtung neu anlaufen; alte Lücken werden nicht aufgefüllt.
 
 Bitte keine Hardwareverbindungen für einen Ausfalltest trennen. Solche Fehler werden zusätzlich mit künstlichen Quellen geprüft. Wer einen eigenen simulierten Sensor hat, kann `unavailable` und einen eingefrorenen Importzähler dort testen.
@@ -27,7 +28,7 @@ Bitte nach ein bis zwei Tagen zurückmelden:
 - Passen aktuelle Werte und zwei bis drei abgeschlossene Viertel? Bitte Uhrzeit und Zeitzone angeben.
 - Gab es unerklärliche Striche, Stillstandsalarme, fehlende Intervalle oder Darstellungsfehler?
 
-Dafür die Issue-Vorlage im privaten Repository verwenden, sofern du Zugriff hast, oder die Rückmeldung direkt an Daheim im Detail geben. Screenshots und Logausschnitte vorher bereinigen. Keine Tokens, Passwörter oder kompletten Konfigurationen weitergeben.
+Dafür die Issue-Vorlage auf GitHub verwenden oder die Rückmeldung direkt an Daheim im Detail geben. Screenshots und Logausschnitte vorher bereinigen. Keine Tokens, Passwörter oder kompletten Konfigurationen weitergeben.
 
 ## Anhang C · Update und Rückbau
 
@@ -39,9 +40,9 @@ Zum Entfernen Integration über Geräte & Dienste löschen. Nach Entfernen des l
 
 ## Bekannte Grenzen
 
-Geprüfte HA-Version: **2026.10.2**. Andere Versionen, die DS916 und der optionale Netz-NÖ-Abgleich sind noch nicht freigegeben. Die korrigierte Fassung wurde mit einem Replay und isolierten Laufzeittests geprüft; ein neuer mehrtägiger Live-Test dieser Fassung steht noch aus. Es gibt keine automatische Gerätesteuerung. Die Ergebnisse ersetzen weder Netzbetreiberwerte noch eine Abrechnung.
+Geprüfte HA-Versionen: **2026.10.2 und 2026.10.4**. Weitere Versionen, die DS916 und der optionale Netz-NÖ-Abgleich sind noch nicht freigegeben. Alpha 6 hat zusätzliche Live-Nachweise; Alpha 7 braucht noch einen eigenen Langzeittest. Details stehen im [Testbericht](TESTBERICHT.md). Es gibt keine automatische Gerätesteuerung. Die Ergebnisse ersetzen weder Netzbetreiberwerte noch eine Abrechnung.
 
-Privates Testen erfolgt per ZIP. Private GitHub-Repositorys lassen sich [laut HACS](https://www.hacs.xyz/docs/faq/private_repositories/) nicht über HACS installieren.
+Installation ist per öffentlichem HACS-Custom-Repository oder ZIP möglich. Private GitHub-Repositorys lassen sich [laut HACS](https://www.hacs.xyz/docs/faq/private_repositories/) nicht über HACS installieren.
 
 
 ## Ziel direkt in der Karte ändern

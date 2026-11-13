@@ -1,3 +1,21 @@
+# 0.1.0-alpha.7 · Messquellen später ändern
+
+Sensoren lassen sich jetzt nach der Einrichtung über **Einstellungen → Geräte & Dienste → Grid Peak Monitor → beim Integrationseintrag ⋮ → Neu konfigurieren** austauschen. Im zweiten Schritt werden Bezugsrichtung und Einstellungen bestätigt. Die Integration muss dafür nicht gelöscht werden.
+
+- Monitor- und Entity-IDs sowie persönliches Ziel bleiben erhalten. Neue Meldungen werden ausschließlich von den neu gewählten Quellen gelesen.
+- Ein Quellenwechsel beginnt mit einem neuen lokalen Verlauf und einer neuen Monatsspitze. Das bisherige Archiv wird vorher in einer eigenen lokalen Datei gesichert. Die Sicherung wird zurückgelesen und geprüft; schlägt sie fehl, bleibt das Original erhalten und die Einrichtung wird später erneut versucht. Eine Wiederherstellung per Oberfläche ist noch nicht enthalten.
+- Beim Wechsel des Energiezählers wird dessen bekannte Auflösung zunächst auf 0 gesetzt; eine passende bekannte Auflösung kann im Bestätigungsdialog neu angegeben werden.
+- Abbrechen, unveränderte Quellen, ungültige Sensoren und bereits belegte Sensorpaare verändern den Verlauf nicht. Ziel und Meldealter bleiben weiterhin über „Konfigurieren“ änderbar.
+- Kürzerer [Schnellstart](docs/SCHNELLSTART.md) mit HACS, ZIP-Alternative und nachträglichem Quellenwechsel. Teststand und Grenzen aktualisiert.
+
+**Update von Alpha 6:** Mit HACS Alpha 7 auswählen oder den Komponentenordner aus dem neuen Installations-ZIP ersetzen. HA neu starten und Browser neu laden. Die bestehende Integration weiterverwenden. Ohne Quellenwechsel bleibt das bisherige Archiv erhalten.
+
+**Validierung:** 90 Python-Tests, 9 JavaScript-Modelltests, bestehende isolierte HA-Laufzeitprüfungen und neue Quellenwechsel-/Archivschutzprüfung. Die neue Prüfung läuft mit HA 2026.10.2 und 2026.10.4. Details im [Testbericht](docs/TESTBERICHT.md).
+
+**Weiter eine Alpha:** Die erfolgreiche echte HACS-Installation und die zwei Live-Abschnitte von rund 59½ und 48 Stunden gehören zu Alpha 6. Alpha 7 hat noch keinen eigenen Langzeittest. Andere Zähler, DS916 und optionaler Portalabgleich sind nicht freigegeben. Keine Gerätesteuerung und kein Ersatz für Netzbetreiberwerte.
+
+---
+
 # 0.1.0-alpha.6 · Einfacher einrichten
 
 - Eigene Netzspitzen-Seite erscheint nach erfolgreicher Einrichtung automatisch in der Seitenleiste. Offizielle Custom-Panel-API, gemeinsamer Renderer mit der bisherigen Karte; keine manuelle Ressourcen- oder Dashboardkonfiguration für den ersten Einsatz.

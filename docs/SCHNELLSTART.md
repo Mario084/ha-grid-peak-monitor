@@ -1,44 +1,60 @@
-# Netzspitzen in vier Schritten
+# Grid Peak Monitor installieren
 
-**Grid Peak Monitor 0.1.0-alpha.6 · Home Assistant 2026.10.2**
+**Testversion 0.1.0-alpha.7 · von Daheim im Detail**
 
-Du brauchst Administratorzugriff und zwei vorhandene Sensoren: gesamte Netzleistung sowie fortlaufenden Netzimport. Die Integration beobachtet und berechnet; sie steuert keine Geräte. Möglichst zuerst in einer eigenen HA-Testinstanz ausprobieren.
+Der Monitor zeigt dir deinen Netzbezug und die voraussichtliche Leistungsspitze der laufenden Viertelstunde. Er schaltet keine Geräte. Geprüft mit Home Assistant 2026.10.2 und 2026.10.4; noch eine Alpha zum Ausprobieren.
 
-## 1 · Sichern und installieren
+## Das brauchst du
 
-Erstelle vor Installation oder Update ein HA-Backup und bewahre eine Kopie samt eventuell benötigtem Notfallpaket außerhalb von HA auf.
+Home Assistant mit Administratorzugriff und zwei bereits vorhandene Sensoren:
 
-**Mit bereits eingerichtetem HACS:** HACS → ⋮ → Benutzerdefinierte Repositorys → `https://github.com/Mario084/ha-grid-peak-monitor` → Kategorie **Integration**. Hinzufügen, Grid Peak Monitor öffnen und die gewünschte Alpha-Version herunterladen. Eine Aufnahme in den Standardkatalog ist dafür nicht nötig. Die Struktur ist lokal geprüft; ein echter HACS-Installationsnachweis steht noch aus. Private Repositorys funktionieren in HACS nicht.
+- **Netzleistung in W oder kW:** die gesamte Leistung am Netzanschluss, nicht PV-Erzeugung oder Hausverbrauch.
+- **Netzbezug in Wh, kWh oder MWh:** ein fortlaufender Zähler ausschließlich für bezogene Energie. Kein Tageszähler und kein Zähler, der Einspeisung gegenrechnet. Die Zustandsklasse muss `total` oder `total_increasing` sein.
 
-**Ohne HACS / privater Test:** Das **[grid-peak-monitor-0.1.0-alpha.6-install.zip](https://github.com/Mario084/ha-grid-peak-monitor/releases/download/v0.1.0-alpha.6/grid-peak-monitor-0.1.0-alpha.6-install.zip)** aus dem Prerelease entpacken. Nur `custom_components/grid_peak_monitor` in den HA-Konfigurationsordner kopieren; vorhandenen Dateizugriff verwenden. Bei HA OS liegt er üblicherweise unter `/config`. Prüfen:
+## 1. Installieren
 
-```text
-<HA-Konfigurationsordner>/custom_components/grid_peak_monitor/manifest.json
-```
+Erstelle zuerst ein Home-Assistant-Backup.
 
-Andere Komponenten bleiben erhalten. Kein zusätzlicher ZIP-/Projektordner im Pfad. Bei einem Update den bisherigen Komponentenordner vollständig durch den neuen ersetzen; eigene Archive liegen außerhalb dieses Ordners.
+**Mit HACS:**
 
-## 2 · HA neu starten und Integration hinzufügen
+1. In HACS über **⋮ → Benutzerdefinierte Repositorys** dieses Repository hinzufügen: `https://github.com/Mario084/ha-grid-peak-monitor` · Kategorie **Integration**.
+2. **Grid Peak Monitor** öffnen. Vorabversionen/Beta-Versionen anzeigen lassen und **0.1.0-alpha.7** herunterladen. Je nach HACS-Version liegt die Auswahl unter **Herunterladen** oder **Erneut herunterladen**.
+3. Home Assistant neu starten.
 
-Home Assistant regulär neu starten. Danach **Einstellungen → Geräte & Dienste → Integration hinzufügen → Grid Peak Monitor**. Bei einem Update einer bereits eingerichteten Integration diese weiterverwenden; nicht löschen und neu anlegen.
+[Direkt in HACS hinzufügen](https://my.home-assistant.io/redirect/hacs_repository/?owner=Mario084&repository=ha-grid-peak-monitor&category=integration)
 
-## 3 · Messquellen, Richtung und Ziel bestätigen
+**Ohne HACS:** Das [Installations-ZIP der Alpha 7](https://github.com/Mario084/ha-grid-peak-monitor/releases/download/v0.1.0-alpha.7/grid-peak-monitor-0.1.0-alpha.7-install.zip) entpacken. Den enthaltenen Ordner `custom_components/grid_peak_monitor` in den HA-Konfigurationsordner kopieren, normalerweise `/config`. Am Ende muss dort `custom_components/grid_peak_monitor/manifest.json` liegen. Danach Home Assistant neu starten.
 
-Der Assistent fragt zuerst nach zwei Quellen:
+Bei einem Update nur den bisherigen Komponentenordner ersetzen und die bestehende Integration weiterverwenden. Nicht löschen und neu anlegen.
 
-- **Gesamte Netzleistung:** W oder kW am gesamten Netzanschluss. Nicht PV-Erzeugung, Hauslast oder nur eine Phase.
-- **Fortlaufender Netzimport:** Wh/kWh/MWh, ausschließlich Netzbezug, `total` oder `total_increasing`. Kein regelmäßig zurückgesetzter Tageszähler und keine saldierte Import-/Exportsumme.
+## 2. Einrichten
 
-Die Vorauswahl grenzt passende Einheiten und Klassen ein; die Bedeutung bestätigst du selbst. Eigene Sensoren ohne Geräteklasse sind mit passenden Metadaten möglich. Fehlende/ungültige Werte werden nicht als null übernommen.
+**Einstellungen → Geräte & Dienste → Integration hinzufügen → Grid Peak Monitor**.
 
-Im zweiten Dialog **Bezugsrichtung bewusst wählen**: bei unabhängig bekanntem tatsächlichem Netzbezug prüfen, ob die Quelle positiv oder negativ meldet. Nicht nur den momentanen Wert betrachten; PV und Akku können einspeisen. **Persönliches Ziel** ist der gewünschte Viertelstunden-Durchschnitt, keine Sicherungs-/Tarifgrenze und kein EVCC-Limit.
+Die beiden Sensoren auswählen. Danach die **Bezugsrichtung** bestätigen: Zeigt dein Leistungssensor bei tatsächlichem Netzbezug einen positiven oder negativen Wert? PV und Akku können einspeisen – deshalb bei eindeutigem Netzbezug prüfen.
 
-**Erweitert** bleibt zunächst eingeklappt: maximales Meldealter standardmäßig **120 Sekunden**; nur passend zum nachgewiesenen Meldetakt ändern. Zählerauflösung **0** bedeutet unbekannt / strenge Energie-Meldefrist, keine geschätzte Auflösung. Nur bekannte Schritte eintragen, etwa **0,01 kWh = 10 Wh**. Bei nur bei Änderung meldenden Importzählern kann die bekannte Auflösung auch bei PV-/Akkubetrieb nötig sein. Nicht raten; im Zweifel vor dem Speichern klären.
+Als **persönliches Ziel** deinen gewünschten Viertelstunden-Durchschnitt in kW eintragen. Das ist eine Anzeigegrenze, keine Gerätesteuerung.
 
-## 4 · Netzspitzen öffnen
+Unter **Erweitert** nur bekannte Werte einstellen: Das maximale Meldealter steht zunächst auf **120 Sekunden**. Bei einem Energiezähler, der beispielsweise in **0,01 kWh / 10 Wh** zählt und nur bei Änderung meldet, die bekannte Auflösung **0,01 kWh** eintragen. **0** bedeutet unbekannt und prüft das Energie-Meldealter streng. Auflösung und Meldetakt nicht raten.
 
-Nach erfolgreicher Einrichtung erscheint **Netzspitzen** in der HA-Seitenleiste. Falls noch nicht sichtbar, die HA-Seite neu laden. Bei mehreren geladenen Monitoren oben den gewünschten Monitor wählen. Es ist kein manueller Ressourceneintrag und keine Dashboardbearbeitung für diese Seite nötig.
+## 3. Anschauen
 
-Die erste vollständige Viertelstunde abwarten. Striche bedeuten fehlende belastbare Daten, nicht null Netzbezug. Unter **Persönliches Ziel → Ziel ändern** lässt sich das eigene Ziel speichern. Die Seite schreibt dabei ausschließlich den zugehörigen Number-Wert dieser Integration.
+Links in der Seitenleiste **Netzspitzen** öffnen. Falls der Eintrag fehlt, die HA-Seite neu laden. Ein eigenes Dashboard musst du nicht bauen.
 
-[Optionale Karte fürs eigene Dashboard](DASHBOARD-KARTE.md) · [Testerchecks, Hilfe, Update und Rückbau](TESTER.md)
+Bis zum ersten abgeschlossenen Wert kann es knapp 30 Minuten dauern: zunächst beginnt eine neue Viertelstunde, dann wird sie vollständig gemessen. Striche bedeuten fehlende verlässliche Daten, nicht null Verbrauch. Das Ziel lässt sich direkt unter **Persönliches Ziel → Ziel ändern** anpassen.
+
+## Sensoren später ändern
+
+**Einstellungen → Geräte & Dienste → Grid Peak Monitor → beim gewünschten Integrationseintrag ⋮ → Neu konfigurieren**.
+
+Neue Sensoren auswählen und im nächsten Schritt Bezugsrichtung sowie gegebenenfalls Zählerauflösung prüfen. Erst mit dem abschließenden Speichern wird gewechselt. Die Monitor-Entitäten und dein Ziel bleiben erhalten.
+
+Mit neuen Messquellen beginnen der lokale Verlauf und die Monatsspitze neu. Der bisherige Verlauf wird vorher lokal gesichert und nicht mit den neuen Messwerten vermischt. Eine Wiederherstellung dieser Sicherung über die Oberfläche gibt es noch nicht. Bei unveränderten Sensoren oder Abbrechen bleibt der Verlauf bestehen.
+
+Ziel, Meldealter und Auflösung kannst du weiterhin über **Konfigurieren** ändern.
+
+## Kurze Rückmeldung nach dem Test
+
+Lass ihn ein bis zwei Tage mitlaufen. Interessant sind: War die Einrichtung verständlich? Passen die ausgewählten Sensoren und angezeigten Werte? Funktioniert der Quellenwechsel? Gibt es unerklärliche Striche oder Fehler? Bitte HA-Version und Zählermodell dazuschreiben.
+
+[Ausführliche Testerchecks](TESTER.md) · [Probleme melden](https://github.com/Mario084/ha-grid-peak-monitor/issues/new/choose)

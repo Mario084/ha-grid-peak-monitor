@@ -7,7 +7,7 @@ from homeassistant.const import Platform
 from homeassistant.util import dt as dt_util
 from homeassistant.helpers import config_validation as cv, entity_registry as er
 
-from .const import DOMAIN, MAX_AGE, RESOLUTION, SIGN, TARGET
+from .const import DOMAIN, ENERGY, MAX_AGE, POWER, RESOLUTION, SIGN, TARGET
 from .coordinator import PeakCoordinator
 from .panel import async_ensure_panel, async_remove_panel_if_unused
 
@@ -45,9 +45,12 @@ async def async_setup_entry(hass, entry):
 
 
 async def options_updated(hass, entry):
-    coordinator = hass.data[DOMAIN].get(entry.entry_id)
+    coordinator = hass.data.get(DOMAIN, {}).get(entry.entry_id)
+    if coordinator is None:
+        await hass.config_entries.async_reload(entry.entry_id)
+        return
     merged = {**entry.data, **entry.options}
-    if any(merged.get(k) != coordinator.options.get(k) for k in (SIGN, MAX_AGE, RESOLUTION)):
+    if any(merged.get(k) != coordinator.options.get(k) for k in (POWER, ENERGY, SIGN, MAX_AGE, RESOLUTION)):
         await hass.config_entries.async_reload(entry.entry_id)
     elif coordinator.monitor.target != merged.get(TARGET):
         coordinator.monitor.target = float(merged[TARGET])
