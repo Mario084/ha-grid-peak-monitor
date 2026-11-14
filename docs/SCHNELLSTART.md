@@ -43,6 +43,12 @@ Links in der Seitenleiste **Netzspitzen** öffnen. Falls der Eintrag fehlt, die 
 
 Bis zum ersten abgeschlossenen Wert kann es knapp 30 Minuten dauern: zunächst beginnt eine neue Viertelstunde, dann wird sie vollständig gemessen. Striche bedeuten fehlende verlässliche Daten, nicht null Verbrauch. Das Ziel lässt sich direkt unter **Persönliches Ziel → Ziel ändern** anpassen.
 
+## Netzbetreiberdaten ergänzen
+
+Für den Rückblick kannst du zusätzlich die Daten deines Netzbetreibers in Home Assistant holen. Die [Anleitung für Netz NÖ](NETZBETREIBERDATEN.md) führt vom Portalzugang über eine separate HACS-Integration bis zum Energie-Dashboard und erklärt weitere Möglichkeiten.
+
+Die Portalwerte kommen zeitversetzt. Verwende für die Live-Prognose weiterhin deine Anlagenwerte. In Alpha 7 ist der Portalimport noch nicht mit der gemeinsamen Viertelstunden-Grafik verbunden; die dokumentierte externe Integration liefert dafür nur Stundenstatistiken.
+
 ## Sensoren später ändern
 
 **Einstellungen → Geräte & Dienste → Grid Peak Monitor → beim gewünschten Integrationseintrag ⋮ → Neu konfigurieren**.

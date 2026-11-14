@@ -4,7 +4,7 @@
 
 **Testversion 0.1.0-alpha.7 für einen kleinen Testkreis.** Von Daheim im Detail, geprüft mit Home Assistant **2026.10.2 und 2026.10.4**. Die korrigierte Fassung ist für einen Test mit 1–2 Personen vorbereitet. Noch kein stabiles Release und kein HACS-Standardpaket.
 
-➡️ **[Schnell installieren](docs/SCHNELLSTART.md)** · [Ausführliche Tester-Anleitung](docs/TESTER.md) · [Release-Notizen](RELEASE_NOTES.md)
+➡️ **[Schnell installieren](docs/SCHNELLSTART.md)** · [Netzbetreiberdaten ergänzen – Beispiel Netz NÖ](docs/NETZBETREIBERDATEN.md) · [Ausführliche Tester-Anleitung](docs/TESTER.md) · [Release-Notizen](RELEASE_NOTES.md)
 
 Du wählst zwei bereits vorhandene Sensoren aus: aktuelle Netzleistung und fortlaufend gezählte Bezugsenergie. Die Integration berechnet daraus eine Prognose für die laufende feste Viertelstunde und archiviert abgeschlossene Intervalle. Sie steuert keine Geräte und benötigt keine Zugangsdaten, Cloud oder externen Bibliotheken.
 
@@ -62,19 +62,13 @@ Die Warnung „Spitze droht“ hat 20 Sekunden Verzögerung und 0,2 kW Hysterese
 
 Die Messung einschließlich Minimum und Restbudget ist eine **lokale Schätzung**. Grobe Zählerschritte begrenzen die Genauigkeit; `0,00 kW` bei einem unveränderten Zähler bedeutet nicht exakt null importierte Energie. Intervallgrenzen können zwischen zeitnahen Energieberichten interpoliert werden. Geräte-Momentanwerte erklären keinen vergangenen Viertelstundenpeak. Netzbetreiberwerte und deine Abrechnung werden dadurch nicht ersetzt.
 
-## Optionaler Netz-NÖ-Abgleich
+## Netzbetreiberdaten ergänzen
 
-Falls die separat installierte Integration `netznoe_quarter_audit` bereits vorhanden ist, kann die Karte ihren authentifizierten Verlauf lesend abrufen:
+Live-Werte zeigen die laufende Viertelstunde; zeitversetzte Netzbetreiberdaten ergänzen den Rückblick. Die [Anleitung mit Netz-NÖ-Beispiel](docs/NETZBETREIBERDATEN.md) erklärt Portalzugang, Viertelstunden-Auslesung, eine externe HACS-Integration für das HA-Energie-Dashboard sowie die lokale Smart-Meter-Schnittstelle als alternative Live-Quelle.
 
-```yaml
-portal_history: true
-# Optional: Entity-ID eines bestehenden Portal-Monatsspitzen-Sensors in kW
-# portal_peak: sensor.beispiel_portal_monatsspitze
-```
+**Alpha 7 enthält keinen Netzbetreiber-Importer.** Die dokumentierte Community-Integration liefert Stundenstatistiken für das Energie-Dashboard. Sie aktiviert keine Portalwerte in unserer Spitzengrafik; aus Stundenwerten lässt sich die Viertelstundenspitze nicht rekonstruieren. Verzögerte Tageswerte sind auch keine geeigneten Live-Quellen des Monitors.
 
-Ohne diesen Importer bleibt die Funktion ausgeschaltet. Das Projekt installiert oder konfiguriert ihn nicht und übernimmt keine Zugangsdaten. Ein nicht verfügbarer Importer blockiert den lokalen Verlauf nicht.
-
-Portalviertel ersetzen in der Tagesgrafik genau das zugehörige UTC-Intervall und sind blau markiert. Die lokalen Top-Intervalle und Tagesmaxima bleiben ausdrücklich HA-Schätzungen. Der optionale Portal-Monatspeak erscheint separat. Der echte Portal-Abgleich wurde für diese neue Alpha noch nicht Ende zu Ende geprüft.
+Die optionale Dashboard-Karte besitzt einen Anschluss an den separaten Adapter `netznoe_quarter_audit`, der nicht mitgeliefert wird. Ein öffentlich installierbarer und Ende zu Ende geprüfter Viertelstunden-Import für diese gemeinsame Darstellung steht noch aus. [Technischer Anschluss der optionalen Karte](docs/DASHBOARD-KARTE.md#optionaler-portalanschluss).
 
 ## Datenschutz, Grenzen und Entfernung
 
